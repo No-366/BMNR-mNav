@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>BMNR mNAV 계산기</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      max-width: 480px;
+      margin: 40px auto;
+      padding: 0 16px;
+      line-height: 1.5;
+      background: #f5f5f5;
+    }
+    h1 {
+      font-size: 20px;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 16px 18px 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      margin-bottom: 16px;
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 4px;
+      font-size: 14px;
+    }
+    input[type="number"] {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      box-sizing: border-box;
+      margin-bottom: 10px;
+    }
+    button {
+      display: inline-block;
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      background: #2563eb;
+      color: white;
+      margin-top: 4px;
+    }
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    .result {
+      margin-top: 10px;
+      font-size: 14px;
+      background: #f9fafb;
+      border-radius: 8px;
+      padding: 8px 10px;
+    }
+    .muted {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 4px;
+    }
+    .row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>BMNR mNAV 계산기</h1>
+
+  <div class="card">
+    <h2 style="font-size:16px; margin-top:0;">1️⃣ 이더리움 가격 → mNAV 계산</h2>
+    <label for="ethPrice">이더리움 가격 (USD)</label>
+    <input type="number" id="ethPrice" placeholder="예: 3300" step="0.01" />
+
+    <button onclick="calcNav()">mNAV 계산</button>
+
+    <div id="navResult" class="result" style="display:none;"></div>
+    <div class="muted">
+      공식: mNAV(E) = (3,505,723 × E + 458,678,088) ÷ 376,104,294
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 style="font-size:16px; margin-top:0;">2️⃣ BMNR 주가 → 프리미엄 계산</h2>
+    <div class="row">
+      <div style="flex:1 1 100%;">
+        <label for="bmnrPrice">BMNR 현재 주가 (USD)</label>
+        <input type="number" id="bmnrPrice" placeholder="예: 37.5" step="0.01" />
+      </div>
+    </div>
+    <button onclick="calcPremium()">프리미엄 계산</button>
+
+    <div id="premiumResult" class="result" style="display:none;"></div>
+    <div class="muted">
+      프리미엄(배) = 주가 ÷ mNAV, 프리미엄(%) = (배 - 1) × 100
+    </div>
+  </div>
+
+  <script>
+    // 상수 설정
+    const ETH_HOLDINGS = 3505723;      // ETH 개수
+    const USD_HOLDINGS = 398000000;    // USD 현금
+    const ALT_ASSETS = 60678088;       // Alternative Assets
+    const SHARES_OUT = 376104294;      // Shares Outstanding
+
+    // 주어진 ETH 가격(E)일 때 주당 mNAV 계산
+    function computeNavPerShare(E) {
+      const totalNav =
+        ETH_HOLDINGS * E + USD_HOLDINGS + ALT_ASSETS;
+      return totalNav / SHARES_OUT;
+    }
+
+    function formatNumber(num) {
+      return num.toLocaleString('en-US', {
+        maximumFractionDigits: 4
+      });
+    }
+
+    // 1) 이더리움 가격 → NAV 계산
+    function calcNav() {
+      const ethInput = document.getElementById('ethPrice');
+      const ethPrice = parseFloat(ethInput.value);
+
+      const navDiv = document.getElementById('navResult');
+
+      if (isNaN(ethPrice) || ethPrice <= 0) {
+        navDiv.style.display = 'block';
+        navDiv.textContent = '유효한 이더리움 가격을 입력하세요.';
+        return;
+      }
+
+      const navPerShare = computeNavPerShare(ethPrice);
+
+      navDiv.style.display = 'block';
+      navDiv.innerHTML =
+        `ETH 가격: $${formatNumber(ethPrice)}<br>` +
+        `mNAV (주당 NAV): <strong>$${formatNumber(navPerShare)}</strong>`;
+    }
+
+    // 2) BMNR 주가 → mNAV 프리미엄 계산
+    function calcPremium() {
+      const ethInput = document.getElementById('ethPrice');
+      const bmnrInput = document.getElementById('bmnrPrice');
+      const premiumDiv = document.getElementById('premiumResult');
+
+      const ethPrice = parseFloat(ethInput.value);
+      const bmnrPrice = parseFloat(bmnrInput.value);
+
+      if (isNaN(ethPrice) || ethPrice <= 0) {
+        premiumDiv.style.display = 'block';
+        premiumDiv.textContent = '먼저 이더리움 가격을 입력하고 mNAV를 계산해 주세요.';
+        return;
+      }
+
+      if (isNaN(bmnrPrice) || bmnrPrice <= 0) {
+        premiumDiv.style.display = 'block';
+        premiumDiv.textContent = '유효한 BMNR 주가를 입력하세요.';
+        return;
+      }
+
+      const navPerShare = computeNavPerShare(ethPrice);
+      const multiple = bmnrPrice / navPerShare;
+      const premiumPercent = (multiple - 1) * 100;
+
+      premiumDiv.style.display = 'block';
+      premiumDiv.innerHTML =
+        `현재 mNAV: <strong>$${formatNumber(navPerShare)}</strong><br>` +
+        `BMNR 주가: <strong>$${formatNumber(bmnrPrice)}</strong><br><br>` +
+        `프리미엄 (배수 기준): <strong>${formatNumber(multiple)}x</strong><br>` +
+        `프리미엄 (% 기준): <strong>${premiumPercent.toFixed(2)}%</strong>`;
+    }
+  </script>
+</body>
+</html>
