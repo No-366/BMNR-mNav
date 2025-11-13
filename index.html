@@ -197,6 +197,10 @@
                 <span class="info-value">3,505,723 ETH</span>
             </div>
             <div class="info-row">
+                <span class="info-label">USD Holdings:</span>
+                <span class="info-value">$398,000,000</span>
+            </div>
+            <div class="info-row">
                 <span class="info-label">Alternative Assets:</span>
                 <span class="info-value">$60,678,088</span>
             </div>
@@ -241,6 +245,7 @@
     <script>
         // Constants
         const ETH_HOLDINGS = 3505723;
+        const USD_HOLDINGS = 398000000;
         const ALTERNATIVE_ASSETS = 60678088;
         const SHARES_OUTSTANDING = 376104294;
 
@@ -260,9 +265,9 @@
                 return;
             }
 
-            // Calculate total holdings value
+            // Calculate total NAV
             const ethValue = ETH_HOLDINGS * ethPrice;
-            const totalValue = ethValue + ALTERNATIVE_ASSETS;
+            const totalValue = ethValue + USD_HOLDINGS + ALTERNATIVE_ASSETS;
 
             // Calculate NAV per share
             const navPerShare = totalValue / SHARES_OUTSTANDING;
