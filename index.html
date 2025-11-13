@@ -95,6 +95,15 @@
             margin-bottom: 0;
         }
 
+        .input-with-button {
+            display: flex;
+            gap: 8px;
+        }
+
+        .input-with-button input {
+            flex: 1;
+        }
+
         .widget-label {
             display: block;
             color: #333;
@@ -126,6 +135,33 @@
         }
 
         .upbit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .bmnr-btn {
+            padding: 10px 16px;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            white-space: nowrap;
+        }
+
+        .bmnr-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        .bmnr-btn:active {
+            transform: translateY(0);
+        }
+
+        .bmnr-btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
         }
@@ -320,7 +356,12 @@
 
         <div class="input-group">
             <label for="stockPrice">BMNR 주가 (USD) - 선택사항</label>
-            <input type="number" id="stockPrice" placeholder="예: 1.05" step="0.01" min="0">
+            <div class="input-with-button">
+                <input type="number" id="stockPrice" placeholder="예: 1.05" step="0.01" min="0">
+                <button class="bmnr-btn" onclick="fetchBMNRPrice()">
+                    <span id="bmnrBtnText">📈 실시간 시세</span>
+                </button>
+            </div>
         </div>
 
         <div class="upbit-section">
@@ -439,7 +480,62 @@
                     }, 1500);
                 }).catch(err => {
                     console.error('Failed to copy:', err);
+                    alert('복사에 실패했습니다.');
                 });
+            }
+        }
+
+        // Fetch BMNR stock price
+        async function fetchBMNRPrice() {
+            const button = document.getElementById('bmnrBtnText');
+            const bmnrBtn = event.target.closest('.bmnr-btn');
+            const stockPriceInput = document.getElementById('stockPrice');
+
+            try {
+                // Disable button and show loading
+                bmnrBtn.disabled = true;
+                button.textContent = '⏳ 로딩중...';
+
+                const url = 'https://openapi.dbsec.co.kr:8443/api/v1/quote/overseas-stock/inquiry/price';
+                const options = {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json;charset=utf-8',
+                        'accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        "In": {
+                            "InputIscd1": "BMNR",
+                            "InputCondMrktDivCode": "FA"
+                        }
+                    })
+                };
+
+                const response = await fetch(url, options);
+                const data = await response.json();
+                
+                if (data && data.Out && data.Out.OutputPrice) {
+                    const price = parseFloat(data.Out.OutputPrice);
+                    
+                    // Auto-fill the input
+                    stockPriceInput.value = price.toFixed(2);
+                    
+                    button.textContent = '✅ 업데이트됨';
+                    setTimeout(() => {
+                        button.textContent = '📈 실시간 시세';
+                    }, 2000);
+                } else {
+                    throw new Error('No price data received');
+                }
+            } catch (error) {
+                console.error('Error fetching BMNR price:', error);
+                alert('BMNR 시세를 가져오는데 실패했습니다. 다시 시도해주세요.');
+                button.textContent = '❌ 실패';
+                setTimeout(() => {
+                    button.textContent = '📈 실시간 시세';
+                }, 2000);
+            } finally {
+                bmnrBtn.disabled = false;
             }
         }
 
