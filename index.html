@@ -80,12 +80,103 @@
             margin-bottom: 20px;
         }
 
+        .upbit-section {
+            margin-bottom: 20px;
+        }
+
+        .upbit-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .upbit-header label {
+            margin-bottom: 0;
+        }
+
         .widget-label {
             display: block;
             color: #333;
             font-weight: 600;
             margin-bottom: 8px;
             font-size: 14px;
+        }
+
+        .upbit-btn {
+            padding: 10px 16px;
+            background: linear-gradient(135deg, #00c896 0%, #00a876 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            white-space: nowrap;
+        }
+
+        .upbit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 200, 150, 0.3);
+        }
+
+        .upbit-btn:active {
+            transform: translateY(0);
+        }
+
+        .upbit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .upbit-price-display {
+            margin-top: 10px;
+            padding: 12px;
+            background: #f0fdf7;
+            border: 1px solid #00c896;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 14px;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .upbit-price-display span {
+            color: #00a876;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .copy-btn {
+            padding: 6px 10px;
+            background: #00c896;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: #00a876;
+        }
+
+        .copy-btn:active {
+            transform: scale(0.95);
         }
 
         label {
@@ -200,8 +291,8 @@
 </head>
 <body>
     <div class="container">
-        <h1>🔷 (주) 엠땅펀드 🔷</h1>
-        <p class="subtitle">BMNR 순자산가치, 프리미엄 계산기</p>
+        <h1>🔷 ETH Holdings Calculator</h1>
+        <p class="subtitle">NAV & Premium/Discount Calculator</p>
 
         <div class="info-section">
             <div class="info-row">
@@ -230,6 +321,19 @@
         <div class="input-group">
             <label for="stockPrice">BMNR 주가 (USD) - 선택사항</label>
             <input type="number" id="stockPrice" placeholder="예: 1.05" step="0.01" min="0">
+        </div>
+
+        <div class="upbit-section">
+            <div class="upbit-header">
+                <label>업비트 ETH 시세 (KRW)</label>
+                <button class="upbit-btn" onclick="fetchUpbitPrice()">
+                    <span id="upbitBtnText">📊 시세 확인</span>
+                </button>
+            </div>
+            <div class="upbit-price-display" id="upbitPriceDisplay" style="display: none;">
+                <span id="upbitPrice">-</span>
+                <button class="copy-btn" onclick="copyUpbitPrice()" title="KRW 가격 복사">📋</button>
+            </div>
         </div>
 
         <div class="widget-section">
@@ -272,6 +376,73 @@
         const USD_HOLDINGS = 398000000;
         const ALTERNATIVE_ASSETS = 60678088;
         const SHARES_OUTSTANDING = 376104294;
+
+        let currentUpbitPrice = null;
+
+        // Fetch Upbit ETH price
+        async function fetchUpbitPrice() {
+            const button = document.getElementById('upbitBtnText');
+            const display = document.getElementById('upbitPriceDisplay');
+            const priceElement = document.getElementById('upbitPrice');
+            const upbitBtn = event.target.closest('.upbit-btn');
+
+            try {
+                // Disable button and show loading
+                upbitBtn.disabled = true;
+                button.textContent = '⏳ 로딩중...';
+
+                const url = 'https://api.upbit.com/v1/ticker?markets=KRW-ETH';
+                const options = {
+                    method: 'GET', 
+                    headers: {accept: 'application/json'}
+                };
+
+                const response = await fetch(url, options);
+                const data = await response.json();
+                
+                if (data && data.length > 0) {
+                    const tradePrice = data[0].trade_price;
+                    currentUpbitPrice = tradePrice;
+                    
+                    // Display the KRW price
+                    priceElement.textContent = `₩${formatNumber(tradePrice)}`;
+                    display.style.display = 'flex';
+                    
+                    button.textContent = '✅ 업데이트됨';
+                    setTimeout(() => {
+                        button.textContent = '📊 업비트 시세';
+                    }, 2000);
+                } else {
+                    throw new Error('No data received');
+                }
+            } catch (error) {
+                console.error('Error fetching Upbit price:', error);
+                alert('업비트 시세를 가져오는데 실패했습니다. 다시 시도해주세요.');
+                button.textContent = '❌ 실패';
+                setTimeout(() => {
+                    button.textContent = '📊 업비트 시세';
+                }, 2000);
+            } finally {
+                upbitBtn.disabled = false;
+            }
+        }
+
+        // Copy Upbit price to clipboard
+        function copyUpbitPrice() {
+            if (currentUpbitPrice) {
+                navigator.clipboard.writeText(currentUpbitPrice).then(() => {
+                    const copyBtn = event.target;
+                    const originalText = copyBtn.textContent;
+                    copyBtn.textContent = '✅';
+                    setTimeout(() => {
+                        copyBtn.textContent = originalText;
+                    }, 1500);
+                }).catch(err => {
+                    console.error('Failed to copy:', err);
+                    alert('복사에 실패했습니다.');
+                });
+            }
+        }
 
         function formatNumber(num) {
             return new Intl.NumberFormat('en-US', {
