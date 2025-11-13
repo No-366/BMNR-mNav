@@ -1,186 +1,311 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <title>BMNR mNAV 계산기</title>
-  <style>
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      max-width: 480px;
-      margin: 40px auto;
-      padding: 0 16px;
-      line-height: 1.5;
-      background: #f5f5f5;
-    }
-    h1 {
-      font-size: 20px;
-      text-align: center;
-      margin-bottom: 16px;
-    }
-    .card {
-      background: white;
-      border-radius: 12px;
-      padding: 16px 18px 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-      margin-bottom: 16px;
-    }
-    label {
-      display: block;
-      font-weight: 600;
-      margin-bottom: 4px;
-      font-size: 14px;
-    }
-    input[type="number"] {
-      width: 100%;
-      padding: 8px 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 14px;
-      box-sizing: border-box;
-      margin-bottom: 10px;
-    }
-    button {
-      display: inline-block;
-      padding: 8px 14px;
-      border-radius: 8px;
-      border: none;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 600;
-      background: #2563eb;
-      color: white;
-      margin-top: 4px;
-    }
-    button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-    .result {
-      margin-top: 10px;
-      font-size: 14px;
-      background: #f9fafb;
-      border-radius: 8px;
-      padding: 8px 10px;
-    }
-    .muted {
-      font-size: 12px;
-      color: #6b7280;
-      margin-top: 4px;
-    }
-    .row {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ETH Holdings NAV Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: #666;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .info-section {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            font-size: 13px;
+            color: #555;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .info-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-label {
+            font-weight: 500;
+        }
+
+        .info-value {
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .calculate-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 10px;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .calculate-btn:active {
+            transform: translateY(0);
+        }
+
+        .results {
+            margin-top: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+            display: none;
+        }
+
+        .results.show {
+            display: block;
+            animation: slideIn 0.4s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-item {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .result-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .result-label {
+            color: #666;
+            font-size: 13px;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .result-value {
+            color: #333;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .premium {
+            color: #e74c3c;
+        }
+
+        .discount {
+            color: #27ae60;
+        }
+
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #999;
+        }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <h1>🔷 ETH Holdings Calculator</h1>
+        <p class="subtitle">NAV & Premium/Discount Calculator</p>
 
-  <h1>BMNR mNAV 계산기</h1>
+        <div class="info-section">
+            <div class="info-row">
+                <span class="info-label">ETH Holdings:</span>
+                <span class="info-value">3,505,723 ETH</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Alternative Assets:</span>
+                <span class="info-value">$60,678,088</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Shares Outstanding:</span>
+                <span class="info-value">376,104,294</span>
+            </div>
+        </div>
 
-  <div class="card">
-    <h2 style="font-size:16px; margin-top:0;">1️⃣ 이더리움 가격 → mNAV 계산</h2>
-    <label for="ethPrice">이더리움 가격 (USD)</label>
-    <input type="number" id="ethPrice" placeholder="예: 3300" step="0.01" />
+        <div class="input-group">
+            <label for="ethPrice">ETH 가격 (USD)</label>
+            <input type="number" id="ethPrice" placeholder="예: 3384" step="0.01" min="0">
+        </div>
 
-    <button onclick="calcNav()">mNAV 계산</button>
+        <div class="input-group">
+            <label for="stockPrice">BMNR 주가 (USD) - 선택사항</label>
+            <input type="number" id="stockPrice" placeholder="예: 1.05" step="0.01" min="0">
+        </div>
 
-    <div id="navResult" class="result" style="display:none;"></div>
-    <div class="muted">
-      공식: mNAV(E) = (3,505,723 × E + 458,678,088) ÷ 376,104,294
+        <button class="calculate-btn" onclick="calculate()">계산하기</button>
+
+        <div class="results" id="results">
+            <div class="result-item">
+                <div class="result-label">Total Holdings Value</div>
+                <div class="result-value" id="totalValue">-</div>
+            </div>
+            <div class="result-item">
+                <div class="result-label">NAV per Share</div>
+                <div class="result-value" id="navPerShare">-</div>
+            </div>
+            <div class="result-item" id="premiumSection" style="display: none;">
+                <div class="result-label">Premium / Discount</div>
+                <div class="result-value" id="premium">-</div>
+            </div>
+        </div>
+
+        <div class="footer">
+            NAV Calculator for ETH Holdings
+        </div>
     </div>
-  </div>
 
-  <div class="card">
-    <h2 style="font-size:16px; margin-top:0;">2️⃣ BMNR 주가 → 프리미엄 계산</h2>
-    <div class="row">
-      <div style="flex:1 1 100%;">
-        <label for="bmnrPrice">BMNR 현재 주가 (USD)</label>
-        <input type="number" id="bmnrPrice" placeholder="예: 37.5" step="0.01" />
-      </div>
-    </div>
-    <button onclick="calcPremium()">프리미엄 계산</button>
+    <script>
+        // Constants
+        const ETH_HOLDINGS = 3505723;
+        const ALTERNATIVE_ASSETS = 60678088;
+        const SHARES_OUTSTANDING = 376104294;
 
-    <div id="premiumResult" class="result" style="display:none;"></div>
-    <div class="muted">
-      프리미엄(배) = 주가 ÷ mNAV, 프리미엄(%) = (배 - 1) × 100
-    </div>
-  </div>
+        function formatNumber(num) {
+            return new Intl.NumberFormat('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format(num);
+        }
 
-  <script>
-    // 상수 설정
-    const ETH_HOLDINGS = 3505723;      // ETH 개수
-    const USD_HOLDINGS = 398000000;    // USD 현금
-    const ALT_ASSETS = 60678088;       // Alternative Assets
-    const SHARES_OUT = 376104294;      // Shares Outstanding
+        function calculate() {
+            const ethPrice = parseFloat(document.getElementById('ethPrice').value);
+            const stockPrice = parseFloat(document.getElementById('stockPrice').value);
 
-    // 주어진 ETH 가격(E)일 때 주당 mNAV 계산
-    function computeNavPerShare(E) {
-      const totalNav =
-        ETH_HOLDINGS * E + USD_HOLDINGS + ALT_ASSETS;
-      return totalNav / SHARES_OUT;
-    }
+            if (!ethPrice || ethPrice <= 0) {
+                alert('유효한 ETH 가격을 입력해주세요.');
+                return;
+            }
 
-    function formatNumber(num) {
-      return num.toLocaleString('en-US', {
-        maximumFractionDigits: 4
-      });
-    }
+            // Calculate total holdings value
+            const ethValue = ETH_HOLDINGS * ethPrice;
+            const totalValue = ethValue + ALTERNATIVE_ASSETS;
 
-    // 1) 이더리움 가격 → NAV 계산
-    function calcNav() {
-      const ethInput = document.getElementById('ethPrice');
-      const ethPrice = parseFloat(ethInput.value);
+            // Calculate NAV per share
+            const navPerShare = totalValue / SHARES_OUTSTANDING;
 
-      const navDiv = document.getElementById('navResult');
+            // Display results
+            document.getElementById('totalValue').textContent = '$' + formatNumber(totalValue);
+            document.getElementById('navPerShare').textContent = '$' + formatNumber(navPerShare);
 
-      if (isNaN(ethPrice) || ethPrice <= 0) {
-        navDiv.style.display = 'block';
-        navDiv.textContent = '유효한 이더리움 가격을 입력하세요.';
-        return;
-      }
+            // Calculate premium/discount if stock price is provided
+            const premiumSection = document.getElementById('premiumSection');
+            if (stockPrice && stockPrice > 0) {
+                const premiumRate = ((stockPrice - navPerShare) / navPerShare) * 100;
+                const premiumElement = document.getElementById('premium');
+                
+                if (premiumRate >= 0) {
+                    premiumElement.textContent = '+' + formatNumber(premiumRate) + '%';
+                    premiumElement.className = 'result-value premium';
+                } else {
+                    premiumElement.textContent = formatNumber(premiumRate) + '%';
+                    premiumElement.className = 'result-value discount';
+                }
+                
+                premiumSection.style.display = 'block';
+            } else {
+                premiumSection.style.display = 'none';
+            }
 
-      const navPerShare = computeNavPerShare(ethPrice);
+            // Show results
+            document.getElementById('results').classList.add('show');
+        }
 
-      navDiv.style.display = 'block';
-      navDiv.innerHTML =
-        `ETH 가격: $${formatNumber(ethPrice)}<br>` +
-        `mNAV (주당 NAV): <strong>$${formatNumber(navPerShare)}</strong>`;
-    }
+        // Allow Enter key to calculate
+        document.getElementById('ethPrice').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                calculate();
+            }
+        });
 
-    // 2) BMNR 주가 → mNAV 프리미엄 계산
-    function calcPremium() {
-      const ethInput = document.getElementById('ethPrice');
-      const bmnrInput = document.getElementById('bmnrPrice');
-      const premiumDiv = document.getElementById('premiumResult');
-
-      const ethPrice = parseFloat(ethInput.value);
-      const bmnrPrice = parseFloat(bmnrInput.value);
-
-      if (isNaN(ethPrice) || ethPrice <= 0) {
-        premiumDiv.style.display = 'block';
-        premiumDiv.textContent = '먼저 이더리움 가격을 입력하고 mNAV를 계산해 주세요.';
-        return;
-      }
-
-      if (isNaN(bmnrPrice) || bmnrPrice <= 0) {
-        premiumDiv.style.display = 'block';
-        premiumDiv.textContent = '유효한 BMNR 주가를 입력하세요.';
-        return;
-      }
-
-      const navPerShare = computeNavPerShare(ethPrice);
-      const multiple = bmnrPrice / navPerShare;
-      const premiumPercent = (multiple - 1) * 100;
-
-      premiumDiv.style.display = 'block';
-      premiumDiv.innerHTML =
-        `현재 mNAV: <strong>$${formatNumber(navPerShare)}</strong><br>` +
-        `BMNR 주가: <strong>$${formatNumber(bmnrPrice)}</strong><br><br>` +
-        `프리미엄 (배수 기준): <strong>${formatNumber(multiple)}x</strong><br>` +
-        `프리미엄 (% 기준): <strong>${premiumPercent.toFixed(2)}%</strong>`;
-    }
-  </script>
+        document.getElementById('stockPrice').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                calculate();
+            }
+        });
+    </script>
 </body>
 </html>
