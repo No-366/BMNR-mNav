@@ -326,6 +326,23 @@
       font-size: 12px;
       color: #999;
     }
+    
+  .input-group label {
+      /* Flexbox 컨테이너로 지정 */
+      display: flex;
+      /* 내부 요소(텍스트와 버튼)를 양 끝으로 분산 배치 */
+      justify-content: space-between;
+      /* 세로 축 중앙 정렬 (텍스트와 버튼이 높이가 다를 경우 유용) */
+      align-items: center;
+      /* label이 가질 수 있는 최대 너비를 지정 (일반적으로 100%) */
+      width: 100%;
+  }
+  
+  .upbit-btn {
+      /* 혹시 모를 충돌을 방지하기 위해 마진을 0으로 설정 */
+      margin: 0;
+  }
+    
   </style>
 </head>
 
@@ -358,8 +375,7 @@
     ETH 가격 (USD)
     <button type="button"
             class="upbit-btn"
-            onclick="applyUpbitEthPrice()"
-            style="margin-left:195px;">
+            onclick="applyUpbitEthPrice()">
       업비트 시세 적용
     </button>
   </label>
