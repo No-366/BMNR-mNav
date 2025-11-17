@@ -1,606 +1,581 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ETH Holdings NAV Calculator</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ETH Holdings NAV Calculator</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
 
-        .container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            padding: 40px;
-            max-width: 500px;
-            width: 100%;
-        }
+    .container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      padding: 40px;
+      max-width: 500px;
+      width: 100%;
+    }
 
-        h1 {
-            color: #333;
-            margin-bottom: 10px;
-            font-size: 28px;
-            text-align: center;
-        }
+    h1 {
+      color: #333;
+      margin-bottom: 10px;
+      font-size: 28px;
+      text-align: center;
+    }
 
-        .subtitle {
-            color: #666;
-            text-align: center;
-            margin-bottom: 30px;
-            font-size: 14px;
-        }
+    .subtitle {
+      color: #666;
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 14px;
+    }
 
-        .info-section {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 25px;
-            font-size: 13px;
-            color: #555;
-        }
+    .info-section {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 25px;
+      font-size: 13px;
+      color: #555;
+    }
 
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-        }
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
 
-        .info-row:last-child {
-            margin-bottom: 0;
-        }
+    .info-row:last-child {
+      margin-bottom: 0;
+    }
 
-        .info-label {
-            font-weight: 500;
-        }
+    .info-label {
+      font-weight: 500;
+    }
 
-        .info-value {
-            font-weight: 600;
-            color: #667eea;
-        }
+    .info-value {
+      font-weight: 600;
+      color: #667eea;
+    }
 
-        .input-group {
-            margin-bottom: 20px;
-        }
+    .input-group {
+      margin-bottom: 20px;
+    }
 
-        .widget-section {
-            margin-bottom: 20px;
-        }
+    .widget-section {
+      margin-bottom: 20px;
+    }
 
-        .upbit-section {
-            margin-bottom: 20px;
-        }
+    .upbit-section {
+      margin-bottom: 20px;
+    }
 
-        .upbit-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
+    .upbit-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
 
-        .upbit-header label {
-            margin-bottom: 0;
-        }
+    .upbit-header label {
+      margin-bottom: 0;
+    }
 
-        .input-with-button {
-            display: flex;
-            gap: 8px;
-        }
+    .input-with-button {
+      display: flex;
+      gap: 8px;
+    }
 
-        .input-with-button input {
-            flex: 1;
-        }
+    .input-with-button input {
+      flex: 1;
+    }
 
-        .widget-label {
-            display: block;
-            color: #333;
-            font-weight: 600;
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
+    .widget-label {
+      display: block;
+      color: #333;
+      font-weight: 600;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
 
-        .upbit-btn {
-            padding: 10px 16px;
-            background: linear-gradient(135deg, #00c896 0%, #00a876 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            white-space: nowrap;
-        }
+    .upbit-btn {
+      padding: 10px 16px;
+      background: linear-gradient(135deg, #00c896 0%, #00a876 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      white-space: nowrap;
+    }
 
-        .upbit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(0, 200, 150, 0.3);
-        }
+    .upbit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(0, 200, 150, 0.3);
+    }
 
-        .upbit-btn:active {
-            transform: translateY(0);
-        }
+    .upbit-btn:active {
+      transform: translateY(0);
+    }
 
-        .upbit-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
+    .upbit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
 
-        .bmnr-btn {
-            padding: 10px 16px;
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            white-space: nowrap;
-        }
+    .bmnr-btn {
+      padding: 10px 16px;
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      white-space: nowrap;
+    }
 
-        .bmnr-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(59, 130, 246, 0.3);
-        }
+    .bmnr-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(59, 130, 246, 0.3);
+    }
 
-        .bmnr-btn:active {
-            transform: translateY(0);
-        }
+    .bmnr-btn:active {
+      transform: translateY(0);
+    }
 
-        .bmnr-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
+    .bmnr-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
 
-        .upbit-price-display {
-            margin-top: 10px;
-            padding: 12px;
-            background: #f0fdf7;
-            border: 1px solid #00c896;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-size: 14px;
-            animation: fadeIn 0.3s ease-out;
-        }
+    .upbit-price-display {
+      margin-top: 10px;
+      padding: 12px;
+      background: #f0fdf7;
+      border: 1px solid #00c896;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 14px;
+      animation: fadeIn 0.3s ease-out;
+    }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
 
-        .upbit-price-display span {
-            color: #00a876;
-            font-weight: 700;
-            font-size: 16px;
-        }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
 
-        .copy-btn {
-            padding: 6px 10px;
-            background: #00c896;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background 0.2s;
-        }
+    .upbit-price-display span {
+      color: #00a876;
+      font-weight: 700;
+      font-size: 16px;
+    }
 
-        .copy-btn:hover {
-            background: #00a876;
-        }
+    .copy-btn {
+      padding: 6px 10px;
+      background: #00c896;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.2s;
+    }
 
-        .copy-btn:active {
-            transform: scale(0.95);
-        }
+    .copy-btn:hover {
+      background: #00a876;
+    }
 
-        label {
-            display: block;
-            color: #333;
-            font-weight: 600;
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
+    .copy-btn:active {
+      transform: scale(0.95);
+    }
 
-        input {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
+    label {
+      display: block;
+      color: #333;
+      font-weight: 600;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
 
-        input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
+    input {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 16px;
+      transition: border-color 0.3s;
+    }
 
-        .calculate-btn {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            margin-top: 10px;
-        }
+    input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
 
-        .calculate-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-        }
+    .calculate-btn {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      margin-top: 10px;
+    }
 
-        .calculate-btn:active {
-            transform: translateY(0);
-        }
+    .calculate-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+    }
 
-        .results {
-            margin-top: 30px;
-            padding: 25px;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            border-radius: 15px;
-            display: none;
-        }
+    .calculate-btn:active {
+      transform: translateY(0);
+    }
 
-        .results.show {
-            display: block;
-            animation: slideIn 0.4s ease-out;
-        }
+    .results {
+      margin-top: 30px;
+      padding: 25px;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      border-radius: 15px;
+      display: none;
+    }
 
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+    .results.show {
+      display: block;
+      animation: slideIn 0.4s ease-out;
+    }
 
-        .result-item {
-            margin-bottom: 15px;
-            padding: 15px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
 
-        .result-item:last-child {
-            margin-bottom: 0;
-        }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
 
-        .result-label {
-            color: #666;
-            font-size: 13px;
-            margin-bottom: 5px;
-            font-weight: 500;
-        }
+    .result-item {
+      margin-bottom: 15px;
+      padding: 15px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
 
-        .result-value {
-            color: #333;
-            font-size: 24px;
-            font-weight: 700;
-        }
+    .result-item:last-child {
+      margin-bottom: 0;
+    }
 
-        .premium {
-            color: #e74c3c;
-        }
+    .result-label {
+      color: #666;
+      font-size: 13px;
+      margin-bottom: 5px;
+      font-weight: 500;
+    }
 
-        .discount {
-            color: #27ae60;
-        }
+    .result-value {
+      color: #333;
+      font-size: 24px;
+      font-weight: 700;
+    }
 
-        .footer {
-            margin-top: 20px;
-            text-align: center;
-            font-size: 12px;
-            color: #999;
-        }
-    </style>
+    .premium {
+      color: #e74c3c;
+    }
+
+    .discount {
+      color: #27ae60;
+    }
+
+    .footer {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 12px;
+      color: #999;
+    }
+  </style>
 </head>
+
 <body>
-    <div class="container">
-        <h1>🔷 엠땅펀드 🔷</h1>
-        <p class="subtitle">BMNR 순자산가치,프리미엄 계산기</p>
+  <div class="container">
+    <h1>🔷 엠땅펀드 🔷</h1>
+    <p class="subtitle">BMNR 순자산가치,프리미엄 계산기</p>
 
-        <div class="info-section">
-            <div class="info-row">
-                <span class="info-label">ETH Holdings:</span>
-                <span class="info-value">3,505,723 ETH</span>
-            </div>
-            <div class="info-row">
-                <span class="info-label">USD Holdings:</span>
-                <span class="info-value">$398,000,000</span>
-            </div>
-            <div class="info-row">
-                <span class="info-label">Alternative Assets:</span>
-                <span class="info-value">$60,678,088</span>
-            </div>
-            <div class="info-row">
-                <span class="info-label">Shares Outstanding:</span>
-                <span class="info-value">376,104,294</span>
-            </div>
-        </div>
-
-        <div class="input-group">
-            <label for="ethPrice">ETH 가격 (USD)</label>
-            <input type="number" id="ethPrice" placeholder="예: 3384" step="0.01" min="0">
-        </div>
-
-        <div class="input-group">
-            <label for="stockPrice">BMNR 주가 (USD) - 선택사항</label>
-            <div class="input-with-button">
-                <input type="number" id="stockPrice" placeholder="예: 1.05" step="0.01" min="0">
-                <!-- <button class="bmnr-btn" onclick="fetchBMNRPrice()">
-                    <span id="bmnrBtnText">📈 실시간 시세</span>
-                </button> -->
-            </div>
-        </div>
-
-        <div class="upbit-section">
-            <div class="upbit-header">
-                <label>실시간 업비트 ETH 시세 (KRW)</label>
-                <button class="upbit-btn" onclick="fetchUpbitPrice()">
-                    <span id="upbitBtnText">📊 시세 확인</span>
-                </button>
-            </div>
-            <div class="upbit-price-display" id="upbitPriceDisplay" style="display: none;">
-                <span id="upbitPrice">-</span>
-                <button class="copy-btn" onclick="copyUpbitPrice()" title="KRW 가격 복사">📋</button>
-            </div>
-        </div>
-
-        <div class="widget-section">
-            <div class="widget-label">실시간 환율 변환기</div>
-            <!-- Currency Converter Script - EXCHANGERATEWIDGET.COM -->
-            <div style="width:100%;border:1px solid #667eea;border-radius:10px;overflow:hidden;">
-                <div style="text-align:center;background-color:#667eea;width:100%;font-size:13px;font-weight:bold;height:18px;padding-top:2px;">
-                    <a href="https://www.exchangeratewidget.com/" style="color:#FFFFFF;text-decoration:none;" rel="nofollow">Currency Converter</a>
-                </div>
-                <script type="text/javascript" src="https://www.exchangeratewidget.com/converter.php?l=en&f=KRW&t=USD&a=1&d=F0F0F0&n=FFFFFF&o=000000&v=1"></script>
-            </div>
-            <!-- End of Currency Converter Script -->
-        </div>
-
-        <button class="calculate-btn" onclick="calculate()">계산하기</button>
-
-        <div class="results" id="results">
-            <div class="result-item">
-                <div class="result-label">Total Holdings Value</div>
-                <div class="result-value" id="totalValue">-</div>
-            </div>
-            <div class="result-item">
-                <div class="result-label">NAV per Share</div>
-                <div class="result-value" id="navPerShare">-</div>
-            </div>
-            <div class="result-item" id="premiumSection" style="display: none;">
-                <div class="result-label">Premium / Discount</div>
-                <div class="result-value" id="premium">-</div>
-            </div>
-        </div>
-
-        <div class="footer">
-            (주) 엠땅 홀딩스
-        </div>
+    <div class="info-section">
+      <div class="info-row">
+        <span class="info-label">ETH Holdings:</span>
+        <span class="info-value">3,505,723 ETH</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">USD Holdings:</span>
+        <span class="info-value">$398,000,000</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Alternative Assets:</span>
+        <span class="info-value">$60,678,088</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Shares Outstanding:</span>
+        <span class="info-value">376,104,294</span>
+      </div>
     </div>
 
-    <script>
-        // Constants
-        const ETH_HOLDINGS = 3505723;
-        const USD_HOLDINGS = 398000000;
-        const ALTERNATIVE_ASSETS = 60678088;
-        const SHARES_OUTSTANDING = 376104294;
+<div class="input-group eth-group">
+  <label for="ethPrice">
+    ETH 가격 (USD)
+    <button type="button"
+            class="upbit-btn"
+            onclick="applyUpbitEthPrice()"
+            style="margin-left:8px;">
+      업비트 시세 적용
+    </button>
+  </label>
 
-        let currentUpbitPrice = null;
+  <input type="number"
+         id="ethPrice"
+         placeholder="예: 3384"
+         step="0.01"
+         min="0">
 
-        // Fetch Upbit ETH price
-        async function fetchUpbitPrice() {
-            const button = document.getElementById('upbitBtnText');
-            const display = document.getElementById('upbitPriceDisplay');
-            const priceElement = document.getElementById('upbitPrice');
-            const upbitBtn = event.target.closest('.upbit-btn');
+  <!-- 시세 설명용 작은 텍스트 -->
+  <small id="ethPriceInfo" style="display:block;margin-top:4px;color:#666;"></small>
+</div>
 
-            try {
-                // Disable button and show loading
-                upbitBtn.disabled = true;
-                button.textContent = '⏳ 로딩중...';
+    <div class="input-group">
+      <label for="stockPrice">BMNR 주가 (USD) - 선택사항</label>
+      <div class="input-with-button">
+        <input type="number" id="stockPrice" placeholder="예: 1.05" step="0.01" min="0">
+        <!-- <button class="bmnr-btn" onclick="fetchBMNRPrice()">
+                    <span id="bmnrBtnText">📈 실시간 시세</span>
+                </button> -->
+      </div>
+    </div>
 
-                const url = 'https://api.upbit.com/v1/ticker?markets=KRW-ETH';
-                const options = {
-                    method: 'GET', 
-                    headers: {accept: 'application/json'}
-                };
+    <div class="widget-section" style="display:none">
+      <div class="widget-label">실시간 환율 변환기</div>
+      <!-- Currency Converter Script - EXCHANGERATEWIDGET.COM -->
+      <div style="width:100%;border:1px solid #667eea;border-radius:10px;overflow:hidden;">
+        <div style="text-align:center;background-color:#667eea;width:100%;font-size:13px;font-weight:bold;height:18px;padding-top:2px;">
+          <a href="https://www.exchangeratewidget.com/" style="color:#FFFFFF;text-decoration:none;" rel="nofollow">Currency Converter</a>
+        </div>
+        <script type="text/javascript" src="https://www.exchangeratewidget.com/converter.php?l=en&f=KRW&t=USD&a=1&d=F0F0F0&n=FFFFFF&o=000000&v=1"></script>
+      </div>
+      <!-- End of Currency Converter Script -->
+    </div>
+    
+    
 
-                const response = await fetch(url, options);
-                const data = await response.json();
-                
-                if (data && data.length > 0) {
-                    const tradePrice = data[0].trade_price;
-                    currentUpbitPrice = tradePrice;
-                    
-                    // Display the KRW price
-                    priceElement.textContent = `₩${formatNumber(tradePrice)}`;
-                    display.style.display = 'flex';
-                    
-                    button.textContent = '✅ 업데이트됨';
-                    setTimeout(() => {
-                        button.textContent = '📊 업비트 시세';
-                    }, 2000);
-                } else {
-                    throw new Error('No data received');
-                }
-            } catch (error) {
-                console.error('Error fetching Upbit price:', error);
-                alert('업비트 시세를 가져오는데 실패했습니다. 다시 시도해주세요.');
-                button.textContent = '❌ 실패';
-                setTimeout(() => {
-                    button.textContent = '📊 업비트 시세';
-                }, 2000);
-            } finally {
-                upbitBtn.disabled = false;
-            }
+    <button class="calculate-btn" onclick="calculate()">계산하기</button>
+
+    <div class="results" id="results">
+      <div class="result-item">
+        <div class="result-label">Total Holdings Value</div>
+        <div class="result-value" id="totalValue">-</div>
+      </div>
+      <div class="result-item">
+        <div class="result-label">NAV per Share</div>
+        <div class="result-value" id="navPerShare">-</div>
+      </div>
+      <div class="result-item" id="premiumSection" style="display: none;">
+        <div class="result-label">Premium / Discount</div>
+        <div class="result-value" id="premium">-</div>
+      </div>
+    </div>
+
+    <div class="footer">
+      (주) 엠땅 홀딩스
+    </div>
+  </div>
+
+  <script>
+    // Constants
+    const ETH_HOLDINGS = 3505723;
+    const USD_HOLDINGS = 398000000;
+    const ALTERNATIVE_ASSETS = 60678088;
+    const SHARES_OUTSTANDING = 376104294;
+    let currentUpbitPrice = null;
+    
+ 
+
+    function formatNumber(num) {
+      return new Intl.NumberFormat('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(num);
+    }
+
+    function calculate() {
+      const ethPrice = parseFloat(document.getElementById('ethPrice').value);
+      const stockPrice = parseFloat(document.getElementById('stockPrice').value);
+      if (!ethPrice || ethPrice <= 0) {
+        alert('유효한 ETH 가격을 입력해주세요.');
+        return;
+      }
+      // Calculate total NAV
+      const ethValue = ETH_HOLDINGS * ethPrice;
+      const totalValue = ethValue + USD_HOLDINGS + ALTERNATIVE_ASSETS;
+      // Calculate NAV per share
+      const navPerShare = totalValue / SHARES_OUTSTANDING;
+      // Display results
+      document.getElementById('totalValue').textContent = '$' + formatNumber(totalValue);
+      document.getElementById('navPerShare').textContent = '$' + formatNumber(navPerShare);
+      // Calculate premium/discount if stock price is provided
+      const premiumSection = document.getElementById('premiumSection');
+      if (stockPrice && stockPrice > 0) {
+        const premiumRate = ((stockPrice - navPerShare) / navPerShare) * 100;
+        const premiumElement = document.getElementById('premium');
+        if (premiumRate >= 0) {
+          premiumElement.textContent = '+' + formatNumber(premiumRate) + '%';
+          premiumElement.className = 'result-value premium';
+        } else {
+          premiumElement.textContent = formatNumber(premiumRate) + '%';
+          premiumElement.className = 'result-value discount';
         }
+        premiumSection.style.display = 'block';
+      } else {
+        premiumSection.style.display = 'none';
+      }
+      // Show results
+      document.getElementById('results').classList.add('show');
+    }
+    // Allow Enter key to calculate
+    document.getElementById('ethPrice').addEventListener('keypress', function(event) {
+      if (event.key === 'Enter') {
+        calculate();
+      }
+    });
+    document.getElementById('stockPrice').addEventListener('keypress', function(event) {
+      if (event.key === 'Enter') {
+        calculate();
+      }
+    });
+    
+    async function fetchUpbitPrice() {
+    const btnText   = document.getElementById('upbitBtnText');
+    const display   = document.getElementById('upbitPriceDisplay');
+    const krwSpan   = document.getElementById('upbitPrice');
+    const usdSpan   = document.getElementById('upbitPriceUSD');
 
-        // Copy Upbit price to clipboard
-        function copyUpbitPrice() {
-            if (currentUpbitPrice) {
-                navigator.clipboard.writeText(currentUpbitPrice).then(() => {
-                    const copyBtn = event.target;
-                    const originalText = copyBtn.textContent;
-                    copyBtn.textContent = '✅';
-                    setTimeout(() => {
-                        copyBtn.textContent = originalText;
-                    }, 1500);
-                }).catch(err => {
-                    console.error('Failed to copy:', err);
-                    
-                });
-            }
-        }
+    btnText.textContent = '⏳ 불러오는 중...';
 
-        // Fetch BMNR stock price
-        async function fetchBMNRPrice() {
-            const button = document.getElementById('bmnrBtnText');
-            const bmnrBtn = event.target.closest('.bmnr-btn');
-            const stockPriceInput = document.getElementById('stockPrice');
+    try {
+      // 1) 업비트에서 ETH 현재가 (KRW) 가져오기
+      const res = await fetch('https://api.upbit.com/v1/ticker?markets=KRW-ETH');
+      if (!res.ok) throw new Error('Upbit API 오류');
 
-            try {
-                // Disable button and show loading
-                bmnrBtn.disabled = true;
-                button.textContent = '⏳ 로딩중...';
+      const data = await res.json();
+      const priceKrw = data[0].trade_price;  // ETH KRW 현재가
 
-                const url = 'https://openapi.dbsec.co.kr:8443/api/v1/quote/overseas-stock/inquiry/price';
-                const options = {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json;charset=utf-8',
-                        'accept': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        "In": {
-                            "InputIscd1": "BMNR",
-                            "InputCondMrktDivCode": "FA"
-                        }
-                    })
-                };
+      // 보기 좋게 포맷팅
+      krwSpan.textContent = priceKrw.toLocaleString('ko-KR', {
+        maximumFractionDigits: 0
+      }) + ' KRW';
 
-                const response = await fetch(url, options);
-                const data = await response.json();
-                
-                if (data && data.Out && data.Out.OutputPrice) {
-                    const price = parseFloat(data.Out.OutputPrice);
-                    
-                    // Auto-fill the input
-                    stockPriceInput.value = price.toFixed(2);
-                    
-                    button.textContent = '✅ 업데이트됨';
-                    setTimeout(() => {
-                        button.textContent = '📈 실시간 시세';
-                    }, 2000);
-                } else {
-                    throw new Error('No price data received');
-                }
-            } catch (error) {
-                console.error('Error fetching BMNR price:', error);
-                alert('BMNR 시세를 가져오는데 실패했습니다. 다시 시도해주세요.');
-                button.textContent = '❌ 실패';
-                setTimeout(() => {
-                    button.textContent = '📈 실시간 시세';
-                }, 2000);
-            } finally {
-                bmnrBtn.disabled = false;
-            }
-        }
+      // 2) 환율 위젯의 rates 배열을 이용해서 USD로 변환
+      if (typeof rates !== 'undefined' && rates['KRW']) {
+        // rates['KRW'] ≈ 1 USD 를 사는 데 필요한 원화 금액
+        const priceUsd = priceKrw / rates['KRW'];
 
-        function formatNumber(num) {
-            return new Intl.NumberFormat('en-US', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            }).format(num);
-        }
+        usdSpan.textContent = priceUsd.toLocaleString('en-US', {
+          maximumFractionDigits: 2
+        }) + ' USD';
+      } else {
+        usdSpan.textContent = '(환율 데이터 없음)';
+      }
 
-        function calculate() {
-            const ethPrice = parseFloat(document.getElementById('ethPrice').value);
-            const stockPrice = parseFloat(document.getElementById('stockPrice').value);
+      display.style.display = 'flex';
+    } catch (e) {
+      console.error(e);
+      krwSpan.textContent = '오류';
+      usdSpan.textContent = '';
+    } finally {
+      btnText.textContent = '📊 시세 확인';
+    }
+  }
 
-            if (!ethPrice || ethPrice <= 0) {
-                alert('유효한 ETH 가격을 입력해주세요.');
-                return;
-            }
+  function copyUpbitPrice() {
+    const krwText = document.getElementById('upbitPrice').textContent;
+    navigator.clipboard.writeText(krwText)
+      .then(() => alert('KRW 가격이 복사되었습니다.'))
+      .catch(() => alert('복사 실패'));
+  }
+    
+    async function applyUpbitEthPrice() {
+    const btn   = document.querySelector('.eth-group .upbit-btn');
+    const input = document.getElementById('ethPrice');
+    const info  = document.getElementById('ethPriceInfo');
 
-            // Calculate total NAV
-            const ethValue = ETH_HOLDINGS * ethPrice;
-            const totalValue = ethValue + USD_HOLDINGS + ALTERNATIVE_ASSETS;
+    const originalText = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = '⏳ 불러오는 중...';
 
-            // Calculate NAV per share
-            const navPerShare = totalValue / SHARES_OUTSTANDING;
+    try {
+      // 1) 업비트에서 ETH 현재가 (KRW) 가져오기
+      const res = await fetch('https://api.upbit.com/v1/ticker?markets=KRW-ETH');
+      if (!res.ok) throw new Error('Upbit API 오류');
 
-            // Display results
-            document.getElementById('totalValue').textContent = '$' + formatNumber(totalValue);
-            document.getElementById('navPerShare').textContent = '$' + formatNumber(navPerShare);
+      const data = await res.json();
+      const priceKrw = data[0].trade_price;  // ETH 현재가 (KRW)
 
-            // Calculate premium/discount if stock price is provided
-            const premiumSection = document.getElementById('premiumSection');
-            if (stockPrice && stockPrice > 0) {
-                const premiumRate = ((stockPrice - navPerShare) / navPerShare) * 100;
-                const premiumElement = document.getElementById('premium');
-                
-                if (premiumRate >= 0) {
-                    premiumElement.textContent = '+' + formatNumber(premiumRate) + '%';
-                    premiumElement.className = 'result-value premium';
-                } else {
-                    premiumElement.textContent = formatNumber(premiumRate) + '%';
-                    premiumElement.className = 'result-value discount';
-                }
-                
-                premiumSection.style.display = 'block';
-            } else {
-                premiumSection.style.display = 'none';
-            }
+      // 2) 환율 위젯의 rates 배열을 이용해서 USD 가격 계산
+      if (typeof rates === 'undefined' || !rates['KRW']) {
+        throw new Error('환율 데이터(rates[\"KRW\"])가 없습니다.');
+      }
 
-            // Show results
-            document.getElementById('results').classList.add('show');
-        }
+      // 1 USD = rates['KRW'] 원 이라고 볼 수 있으므로:
+      const priceUsd = priceKrw / rates['KRW'];
+      const roundedUsd = priceUsd.toFixed(2); // 소수 둘째 자리까지
 
-        // Allow Enter key to calculate
-        document.getElementById('ethPrice').addEventListener('keypress', function(event) {
-            if (event.key === 'Enter') {
-                calculate();
-            }
-        });
+      // 3) ETH 가격 입력칸에 자동 입력
+      input.value = roundedUsd;
 
-        document.getElementById('stockPrice').addEventListener('keypress', function(event) {
-            if (event.key === 'Enter') {
-                calculate();
-            }
-        });
-    </script>
+      // 4) 아래 설명 텍스트 업데이트
+      info.textContent =
+        `업비트 기준 약 ${priceKrw.toLocaleString('ko-KR')} KRW ≈ ${roundedUsd} USD 적용됨`;
+    } catch (e) {
+      console.error(e);
+      info.textContent = '시세를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.';
+    } finally {
+      btn.disabled = false;
+      btn.textContent = originalText;
+    }
+  }
+  </script>
+  
+  
 </body>
+
 </html>
